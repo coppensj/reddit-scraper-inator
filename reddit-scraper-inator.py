@@ -6,7 +6,7 @@ import config
 from PIL import Image
 import urllib, io
 import datetime as dt
-
+import os
 
 reddit = praw.Reddit(client_id = config.PERSONAL_USE_SCRIPT, \
                      client_secret = config.SECRET_KEY, \
@@ -15,7 +15,6 @@ reddit = praw.Reddit(client_id = config.PERSONAL_USE_SCRIPT, \
                      password = config.PASSWORD)
 
 thibbyboy = reddit.redditor('Thibson34')
-
 title_string = 'Every day General Grievous adds a unique lightsaber to his collection.'
 
 posts = {
@@ -29,6 +28,8 @@ posts = {
         'gold': [],
         'plat': [],
         'img_file': []}
+
+if not os.path.exists('Images/'): os.makedirs('Images/')
 
 for submission in thibbyboy.submissions.new(limit=200):
     if submission.subreddit not in ['PrequelMemes', 'HistoryMemes']:
@@ -60,12 +61,11 @@ for submission in thibbyboy.submissions.new(limit=200):
             posts['plat'].append(0)
         
         filename = f"Images/day_{day}.png"
-        if day in [53, 65]:
-            with urllib.request.urlopen(submission.url) as url:
-                f = io.BytesIO(url.read())
-            im = Image.open(f)
-            im = im.convert('RGB')
-            im.save(filename)
+        with urllib.request.urlopen(submission.url) as url:
+            f = io.BytesIO(url.read())
+        im = Image.open(f)
+        im = im.convert('RGB')
+        im.save(filename)
         posts['img_file'].append(filename)
 
 posts = pd.DataFrame(posts).sort_values(by=['day'])
