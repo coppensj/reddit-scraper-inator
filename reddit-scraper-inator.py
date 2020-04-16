@@ -19,6 +19,7 @@ title_string = 'Every day General Grievous adds a unique lightsaber to his colle
 
 posts = {
         'date': [],
+        'time': [],
         'day': [],
         'description': [],
         'karma': [],
@@ -40,7 +41,9 @@ for submission in thibbyboy.submissions.new(limit=200):
         print(submission.title)
         title = submission.title.split('.')
         day = int(title[1].split(':')[0][5:7])
-        posts['date'].append(dt.date.fromtimestamp(submission.created_utc))
+        post_time = dt.datetime.fromtimestamp(submission.created_utc)
+        posts['date'].append(post_time.date())
+        posts['time'].append(post_time.time())
         posts['day'].append(day)
         posts['description'].append(title[1].split(':')[1][1:])
         posts['karma'].append(submission.score)
